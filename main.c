@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "logger.h"
+
+#define LOG_FILE "./log.txt"
+
+/*
 #define LOG(format, ...) _LOG(__FILE__, __LINE__, format, ##__VA_ARGS__)
 
 void _log(const char* file, unsigned int line, const char* format, va_list arg) 
@@ -19,8 +24,21 @@ void _LOG(const char *file, unsigned int line, const char* format, ...)
     va_end(arg);
     _log(file, line, format, arg);
 }
+*/
+
+struct logger_t logger;
+
+#include <unistd.h>
 
 int main () 
 {
-   LOG("hello world\n");
+    init_logger(&logger, LOG_FILE);
+    //CHECK("hello world %d\n", 1);
+    INFO("hello %d\n", 1);
+    /*
+    char cwd[10];
+    if (getcwd(cwd, 10) != NULL) {
+        _mylog(cwd, CHECK_MODE, "hello %d\n", 1);
+    }
+    */
 }
