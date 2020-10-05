@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "util.h"
+
 #define MODULE_SIZE 20    // "[main] "
 #define MODE_SIZE 9       // "[WARN] "
 #define MSG_SIZE 100      // msg body 
@@ -65,9 +67,17 @@ int init_logger(struct logger_t*, const char*, unsigned char);
             printf("%s", buf);                                          \
             }                                                           \
     } else {                                                            \
+        /* can not get filename */                                      \
         printf("GG\n");                                                 \
     }                                                                   \
 } while(0)
+
+
+static inline void _log_get_module_name(char **filename)
+{
+    strtok(*filename, ".");
+    strtok(*filename, "_");
+}
 
 static inline void log(unsigned line_num, mode_e mode, const char* format, ...)
 {
@@ -78,6 +88,8 @@ static inline void log(unsigned line_num, mode_e mode, const char* format, ...)
     char cwd[MODULE_SIZE];
     if (getcwd(cwd, MODULE_SIZE) == NULL) {
         strncpy(cwd, "Unknown", MODULE_SIZE);
+    } else {
+        _log_get_module_name((char**) &cwd);
     }
 
     if (logger.log_thread) {
@@ -88,6 +100,18 @@ static inline void log(unsigned line_num, mode_e mode, const char* format, ...)
         switch (mode) {
             case CHECK_MODE:
                 len = snprintf(buf, MODULE_SIZE+MODE_SIZE, "[%5s][%5s] ", cwd, "CHECK");
+                break;
+            case INFO_MODE:
+                len = snprintf(buf, MODULE_SIZE+MODE_SIZE, "[%5s][%5s] ", cwd, "INFO");
+                break;
+            case DEBUG_MODE:
+                len = snprintf(buf, MODULE_SIZE+MODE_SIZE, "[%5s][%5s] ", cwd, "DEBUG");
+                break;
+            case WARN_MODE:
+                len = snprintf(buf, MODULE_SIZE+MODE_SIZE, "[%5s][%5s] ", cwd, "WARN");
+                break;
+            case ERROR_MODE:
+                len = snprintf(buf, MODULE_SIZE+MODE_SIZE, "[%5s][%5s] ", cwd, "ERROR");
                 break;
             default:
                 break;
