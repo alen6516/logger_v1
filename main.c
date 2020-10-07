@@ -34,7 +34,7 @@ struct logger_t logger;
 
 int main () 
 {
-    init_logger(&logger, LOG_FILE);
+    init_logger(&logger, LOG_FILE, 0);
     //CHECK("hello world %d\n", 1);
     INFO("hello %d\n", 1);
 }
